@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding-top: 50px;
+        }
+
+        .result-area {
+            width: 100%;
+            height: 100px;
+            text-align: center;
+        }
+
+        .play-board {
+            width: 500px;
+            height: 500px;
+            border: 3px solid black;
+            border-radius: 10px;
+            display: grid;
+            grid-template-columns: auto auto auto;
+        }
+
+        #box5 {
+            border: 1px solid black;
+        }
+
+        #box2,
+        #box8 {
+            border-left: 1px solid black;
+            border-right: 1px solid black;
+        }
+
+        #box4,
+        #box6 {
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
+        }
+
+        .box {
+            font-size: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .box:hover {
+            background-color: rgba(179, 255, 217, 1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Tic-Tac-Toe</h1>
+        <div class="result-area">
+            <h2 id="result-display"></h2>
+        </div>
+        <div class="play-board" id="play-board">
+            <div class="box" id="box1"></div>
+            <div class="box" id="box2"></div>
+            <div class="box" id="box3"></div>
+            <div class="box" id="box4"></div>
+            <div class="box" id="box5"></div>
+            <div class="box" id="box6"></div>
+            <div class="box" id="box7"></div>
+            <div class="box" id="box8"></div>
+            <div class="box" id="box9"></div>
+        </div>
+    </div>
+    <script>
+        // Current Game State
+        let gameState = [];
+        // Stores index of all clicked boxes
+        let clickedBoxes = [];
+        let setClickedBoxes = {};
+        let updatedClickedBoxed = [];
+
+        // Getting clicked box info and setting it respectively
+        const gameboard = document.getElementById("play-board");
+        const clickedBox1 = document.getElementById("box1");
+        const clickedBox2 = document.getElementById("box2");
+        const clickedBox3 = document.getElementById("box3");
+        const clickedBox4 = document.getElementById("box4");
+        const clickedBox5 = document.getElementById("box5");
+        const clickedBox6 = document.getElementById("box6");
+        const clickedBox7 = document.getElementById("box7");
+        const clickedBox8 = document.getElementById("box8");
+        const clickedBox9 = document.getElementById("box9");
+
+        // Adding event listerner for each boxes
+        clickedBox1.addEventListener("click", changeGameState);
+        clickedBox2.addEventListener("click", changeGameState);
+        clickedBox3.addEventListener("click", changeGameState);
+        clickedBox4.addEventListener("click", changeGameState);
+        clickedBox5.addEventListener("click", changeGameState);
+        clickedBox6.addEventListener("click", changeGameState);
+        clickedBox7.addEventListener("click", changeGameState);
+        clickedBox8.addEventListener("click", changeGameState);
+        clickedBox9.addEventListener("click", changeGameState);
+
+        function changeGameState(e) {
+            if (e.target.innerText === "") {
+                let boxId = e.target.id;
+                let lastBoxId = [];
+                let lastMove = [];
+                setClickedBoxes = new Set(clickedBoxes);
+                updatedClickedBoxed = [...setClickedBoxes];
+
+                if (gameState.length === 0 && updatedClickedBoxed.length === 0) {
+                    clickedBoxes.push(boxId);
+                    updatedClickedBoxed.push(boxId);
+                    gameState.push("X");
+                    e.target.innerText = "X";
+                    e.target.style.color = "red";
+                } else {
+                    lastBoxId = updatedClickedBoxed[updatedClickedBoxed.length - 1];
+                    lastMove = gameState[gameState.length - 1];
+                    if (lastMove === "X") {
+                        gameState.push("O");
+                        e.target.innerText = "O";
+                        e.target.style.color = "black";
+                        updatedClickedBoxed.push(boxId);
+                        for (let i in updatedClickedBoxed) {
+                            if (updatedClickedBoxed[i] !== boxId) {
+                                clickedBoxes.push(boxId);
+                            }
+                        }
+                    } else {
+                        gameState.push("X");
+                        e.target.innerText = "X";
+                        e.target.style.color = "red";
+                        updatedClickedBoxed.push(boxId);
+                        for (let i in updatedClickedBoxed) {
+                            if (updatedClickedBoxed[i] !== boxId) {
+                                clickedBoxes.push(boxId);
+                            }
+                        }
+                    }
+                }
+                checkWinner(e);
+            } else {
+                alert("This box is used already!");
+            }
+
+        }
+
+        function checkWinner(e) {
+            const resultArea = document.getElementById("result-area");
+            const resultDisplay = document.getElementById("result-display");
+
+
+            if ((e.target.id === "box1" && e.target.innerText === "X" && clickedBox2.innerText == "X" && clickedBox3
+                    .innerText === "X") ||
+                (e.target.id === "box1" && e.target.innerText === "X" && clickedBox4.innerText == "X" && clickedBox7
+                    .innerText === "X") ||
+                (e.target.id === "box1" && e.target.innerText === "X" && clickedBox5.innerText == "X" && clickedBox9
+                    .innerText === "X")) {
+                resultDisplay.innerText = "X has Won!";
+                resetGame();
+            } else if ((e.target.id === "box2" && e.target.innerText === "X" && clickedBox1.innerText == "X" &&
+                    clickedBox3.innerText === "X") ||
+                (e.target.id === "box2" && e.target.innerText === "X" && clickedBox5.innerText == "X" && clickedBox8
+                    .innerText === "X")) {
+                resultDisplay.innerText = "X has Won!";
+                resetGame();
+            } else if ((e.target.id === "box3" && e.target.innerText === "X" && clickedBox1.innerText == "X" &&
+                    clickedBox2.innerText === "X") ||
+                (e.target.id === "box3" && e.target.innerText === "X" && clickedBox6.innerText == "X" && clickedBox6
+                    .innerText === "X") ||
+                (e.target.id === "box3" && e.target.innerText === "X" && clickedBox5.innerText == "X" && clickedBox7
+                    .innerText === "X")) {
+                resultDisplay.innerText = "X has Won!";
+                resetGame();
+            } else if ((e.target.id === "box4" && e.target.innerText === "X" && clickedBox1.innerText == "X" &&
+                    clickedBox7.innerText === "X") ||
+                (e.target.id === "box4" && e.target.innerText === "X" && clickedBox5.innerText == "X" && clickedBox6
+                    .innerText === "X")) {
+                resultDisplay.innerText = "X has Won!";
+                resetGame();
+            } else if ((e.target.id === "box5" && e.target.innerText === "X" && clickedBox4.innerText == "X" &&
+                    clickedBox6.innerText === "X") ||
+                (e.target.id === "box5" && e.target.innerText === "X" && clickedBox2.innerText == "X" && clickedBox8
+                    .innerText === "X") ||
+                (e.target.id === "box5" && e.target.innerText === "X" && clickedBox1.innerText == "X" && clickedBox9
+                    .innerText === "X") ||
+                (e.target.id === "box5" && e.target.innerText === "X" && clickedBox3.innerText == "X" && clickedBox7
+                    .innerText === "X")) {
+                resultDisplay.innerText = "X has Won!";
+                resetGame();
+            } else if ((e.target.id === "box6" && e.target.innerText === "X" && clickedBox3.innerText == "X" &&
+                    clickedBox9.innerText === "X") ||
+                (e.target.id === "box6" && e.target.innerText === "X" && clickedBox4.innerText == "X" && clickedBox5
+                    .innerText === "X")) {
+                resultDisplay.innerText = "X has Won!";
+                resetGame();
+            } else if ((e.target.id === "box7" && e.target.innerText === "X" && clickedBox1.innerText == "X" &&
+                    clickedBox4.innerText === "X") ||
+                (e.target.id === "box7" && e.target.innerText === "X" && clickedBox8.innerText == "X" && clickedBox9
+                    .innerText === "X") ||
+                (e.target.id === "box7" && e.target.innerText === "X" && clickedBox5.innerText == "X" && clickedBox3
+                    .innerText === "X")) {
+                resultDisplay.innerText = "X has Won!";
+                resetGame();
+            } else if ((e.target.id === "box8" && e.target.innerText === "X" && clickedBox7.innerText == "X" &&
+                    clickedBox9.innerText === "X") ||
+                (e.target.id === "box8" && e.target.innerText === "X" && clickedBox2.innerText == "X" && clickedBox5
+                    .innerText === "X")) {
+                resultDisplay.innerText = "X has Won!";
+                resetGame();
+            } else if ((e.target.id === "box9" && e.target.innerText === "X" && clickedBox3.innerText == "X" &&
+                    clickedBox6.innerText === "X") ||
+                (e.target.id === "box9" && e.target.innerText === "X" && clickedBox7.innerText == "X" && clickedBox8
+                    .innerText === "X") ||
+                (e.target.id === "box9" && e.target.innerText === "X" && clickedBox1.innerText == "X" && clickedBox5
+                    .innerText === "X")) {
+                resultDisplay.innerText = "X has Won!";
+                resetGame();
+            } else if ((e.target.id === "box1" && e.target.innerText === "O" && clickedBox2.innerText == "O" &&
+                    clickedBox3.innerText === "O") ||
+                (e.target.id === "box1" && e.target.innerText === "O" && clickedBox4.innerText == "O" && clickedBox7
+                    .innerText === "O") ||
+                (e.target.id === "box1" && e.target.innerText === "O" && clickedBox5.innerText == "O" && clickedBox9
+                    .innerText === "O")) {
+                resultDisplay.innerText = "O has Won!";
+                resetGame();
+            } else if ((e.target.id === "box2" && e.target.innerText === "O" && clickedBox1.innerText == "O" &&
+                    clickedBox3.innerText === "O") ||
+                (e.target.id === "box2" && e.target.innerText === "O" && clickedBox5.innerText == "O" && clickedBox8
+                    .innerText === "O")) {
+                resultDisplay.innerText = "O has Won!";
+                resetGame();
+            } else if ((e.target.id === "box3" && e.target.innerText === "O" && clickedBox1.innerText == "O" &&
+                    clickedBox2.innerText === "O") ||
+                (e.target.id === "box3" && e.target.innerText === "O" && clickedBox6.innerText == "O" && clickedBox6
+                    .innerText === "O") ||
+                (e.target.id === "box3" && e.target.innerText === "O" && clickedBox5.innerText == "O" && clickedBox7
+                    .innerText === "O")) {
+                resultDisplay.innerText = "O has Won!";
+                resetGame();
+            } else if ((e.target.id === "box4" && e.target.innerText === "O" && clickedBox1.innerText == "O" &&
+                    clickedBox7.innerText === "O") ||
+                (e.target.id === "box4" && e.target.innerText === "O" && clickedBox5.innerText == "O" && clickedBox6
+                    .innerText === "O")) {
+                resultDisplay.innerText = "O has Won!";
+                resetGame();
+            } else if ((e.target.id === "box5" && e.target.innerText === "O" && clickedBox4.innerText == "O" &&
+                    clickedBox6.innerText === "O") ||
+                (e.target.id === "box5" && e.target.innerText === "O" && clickedBox2.innerText == "O" && clickedBox8
+                    .innerText === "O") ||
+                (e.target.id === "box5" && e.target.innerText === "O" && clickedBox1.innerText == "O" && clickedBox9
+                    .innerText === "O") ||
+                (e.target.id === "box5" && e.target.innerText === "O" && clickedBox3.innerText == "O" && clickedBox7
+                    .innerText === "O")) {
+                resetGame();
+            } else if ((e.target.id === "box6" && e.target.innerText === "O" && clickedBox3.innerText == "O" &&
+                    clickedBox9.innerText === "O") ||
+                (e.target.id === "box6" && e.target.innerText === "O" && clickedBox4.innerText == "O" && clickedBox5
+                    .innerText === "O")) {
+                resultDisplay.innerText = "O has Won!";
+                resetGame();
+            } else if ((e.target.id === "box7" && e.target.innerText === "O" && clickedBox1.innerText == "O" &&
+                    clickedBox4.innerText === "O") ||
+                (e.target.id === "box7" && e.target.innerText === "O" && clickedBox8.innerText == "O" && clickedBox9
+                    .innerText === "O") ||
+                (e.target.id === "box7" && e.target.innerText === "O" && clickedBox5.innerText == "O" && clickedBox3
+                    .innerText === "O")) {
+                resultDisplay.innerText = "O has Won!";
+                resetGame();
+            } else if ((e.target.id === "box8" && e.target.innerText === "O" && clickedBox7.innerText == "O" &&
+                    clickedBox9.innerText === "O") ||
+                (e.target.id === "box8" && e.target.innerText === "O" && clickedBox2.innerText == "O" && clickedBox5
+                    .innerText === "O")) {
+                resultDisplay.innerText = "O has Won!";
+                resetGame();
+            } else if ((e.target.id === "box9" && e.target.innerText === "O" && clickedBox3.innerText == "O" &&
+                    clickedBox6.innerText === "O") ||
+                (e.target.id === "box9" && e.target.innerText === "O" && clickedBox7.innerText == "O" && clickedBox8
+                    .innerText === "O") ||
+                (e.target.id === "box9" && e.target.innerText === "O" && clickedBox1.innerText == "O" && clickedBox5
+                    .innerText === "O")) {
+                resultDisplay.innerText = "O has Won!";
+                resetGame();
+            } else {
+                resultDisplay.innerText = "";
+            }
+
+            if (updatedClickedBoxed.length === 9) {
+                resultDisplay.innerText = "Cats Game!";
+                resetGame();
+            }
+
+            function resetGame() {
+                setTimeout(function () {
+                    alert(resultDisplay.innerText);
+                    resultDisplay.innerText = "";
+                    clickedBox1.innerText = "";
+                    clickedBox2.innerText = "";
+                    clickedBox3.innerText = "";
+                    clickedBox4.innerText = "";
+                    clickedBox5.innerText = "";
+                    clickedBox6.innerText = "";
+                    clickedBox7.innerText = "";
+                    clickedBox8.innerText = "";
+                    clickedBox9.innerText = "";
+
+                    while (gameState.length > 0) {
+                        gameState.pop();
+                    }
+
+                    while (clickedBoxes.length > 0) {
+                        clickedBoxes.pop();
+                    }
+                    while (updatedClickedBoxed.length > 0) {
+                        updatedClickedBoxed.pop();
+                    }
+
+                });
+            }
+
+        }
+    </script>
+</body>
+
+</html>
